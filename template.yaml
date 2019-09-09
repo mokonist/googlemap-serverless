@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Google Map SAM Template
+Resources:
+  locationFunctions:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: server/location
+      Handler: app.handler
+      Runtime: nodejs10.x
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DynamoDB
+      Events:
+        GETLocation:
+          Type: Api
+          Properties:
+            Path: /location
+            Method: GET
+        PUTLocation: 
+          Type: Api
+          Properties:
+            Path: /location
+            Method: POST
+  DynamoDB:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: "googlemap"
+      PrimaryKey:
+        Name: id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
